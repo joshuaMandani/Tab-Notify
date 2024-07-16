@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Tab Notify Extension",
+    "description": "Notify the user with an audio ",
+    "version": "1.0",
+    "action": {
+      "default_popup": "./popup/popup.html"
+    },
+    "background": {
+      "service_worker": "./scripts/background.js"
+    },
+    "permissions": [
+      "tabs"
+    ]
+  }
