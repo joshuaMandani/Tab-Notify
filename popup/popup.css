@@ -80,3 +80,8 @@ body {
   font-size: 18px;
   text-align: center;
 }
+
+.tab-container {
+  display: flex;
+  flex-direction: column;
+}

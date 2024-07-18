@@ -1,4 +1,4 @@
-let tracked_tab_ids = [];
+let tracked_tabs = [];
 let current_tab = {
   favIconUrl: "",
   id: -999999999,
@@ -24,17 +24,13 @@ async function getCurrentTab() {
   current_tab.url = tab?.url || tab?.pendingUrl;
 }
 
-function track_tab(tab_id) {
-  tracked_tab_ids.push(tab_id);
+function track_tab() {
+  tracked_tabs.push(structuredClone(current_tab));
   count += 1;
 }
 
 function remove_tab(tab_id) {
-  if (tracked_tab_ids.indexOf(tab_id) == -1) {
-    return;
-  }
-
-  tracked_tab_ids.splice(tracked_tab_ids.indexOf(tab_id), 1);
+  tracked_tabs = tracked_tabs.filter((tab) => tab.id !== tab_id);
   count -= 1;
 }
 
@@ -66,22 +62,32 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message == "is_tracked") {
-    if (tracked_tab_ids.indexOf(current_tab.id) == -1) {
+    if (tracked_tabs.some((tab) => tab.id === current_tab.id)) {
       sendResponse({
-        tracked: false,
+        message: true,
         tab: current_tab,
+        tracked: tracked_tabs,
       });
     } else {
       sendResponse({
-        tracked: true,
+        message: false,
         tab: current_tab,
+        tracked: tracked_tabs,
       });
     }
   } else if (request.message == "add_tab") {
-    track_tab(current_tab.id);
-    sendResponse({ action: "added" });
+    track_tab();
+    sendResponse({
+      message: "added",
+      tab: current_tab,
+      tracked: tracked_tabs,
+    });
   } else if (request.message == "remove_tab") {
     remove_tab(current_tab.id);
-    sendResponse({ action: "removed" });
+    sendResponse({
+      message: "removed",
+      tab: current_tab,
+      tracked: tracked_tabs,
+    });
   }
 });
