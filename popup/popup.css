@@ -1,74 +1,82 @@
 @font-face {
-    font-family: Lato;
-    src: url(../fonts/lato-regular.woff)
+  font-family: Lato;
+  src: url(../fonts/lato-regular.woff);
 }
 
 @font-face {
-    font-family: Lato-Bold;
-    src: url(../fonts/lato-bold.woff)
+  font-family: Lato-Bold;
+  src: url(../fonts/lato-bold.woff);
 }
 
 body {
-    font-family: Lato;
-    font-size: 18px;
-    background-color: rgb(244, 244, 244);
-    max-height: 600px;
-    width: 300px;
+  font-family: Lato;
+  font-size: 18px;
+  background-color: rgb(244, 244, 244);
+  max-height: 600px;
+  width: 300px;
 }
 
-.section, .section-2{
-    background-color: white;
-    border-radius: 5px;
-    padding: 10px 5px 10px 5px;
-    text-align: center;
-    margin: 10px 0 10px 0;
+.section,
+.section-2 {
+  background-color: white;
+  border-radius: 5px;
+  padding: 10px 5px 10px 5px;
+  text-align: center;
+  margin: 10px 0 10px 0;
 }
 
 .section-2 {
-    padding: 0;
-    margin: 10px 0 10px 0;
+  padding: 0;
+  margin: 10px 0 10px 0;
 }
 
 #add {
-    height: 35px;   
-    width: 270px;
-    border-radius: 5px;
-    border: none;
-    color: rgb(51, 51, 51);
-    margin: 5px;
+  height: 35px;
+  width: 270px;
+  border-radius: 5px;
+  border: none;
+  color: rgb(51, 51, 51);
+  margin: 5px;
 }
 
 #add:hover {
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
-    cursor: grab; 
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
 }
 
 .num_tracking {
-    display: inline;
+  display: inline;
 }
 
 .link {
-    font-size: 18px;
-    text-align: center;
-    text-overflow: ellipsis;
-    display: inline;
+  font-size: 18px;
+  text-align: center;
+  text-overflow: ellipsis;
+  display: inline;
+}
+
+.ellipsis {
+  font-size: 18px;
+  text-align: center;
+  text-overflow: ellipsis;
+  display: inline;
 }
 
 .title {
-    padding: 5px;
-    font-size: 18px;
-    text-align: center;
-    text-overflow: ellipsis;
-    display: inline;
+  padding: 5px;
+  font-size: 18px;
+  text-align: center;
+  text-overflow: ellipsis;
+  display: inline;
 }
 
 .favIconUrl {
-    margin-right: 5px;
-    width: 16px;
-    display: inline;
+  margin-right: 5px;
+  width: 16px;
+  display: inline;
 }
 
 .tracking {
-    font-size: 18px;
-    text-align: center;
+  font-size: 18px;
+  text-align: center;
 }
