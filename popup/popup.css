@@ -85,3 +85,15 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.tab {
+  font-size: 16px;
+  text-overflow: ellipsis;
+  height: 20px;
+  overflow: hidden;
+}
+
+.tab:hover {
+  overflow: visible;
+  height: auto;
+}
