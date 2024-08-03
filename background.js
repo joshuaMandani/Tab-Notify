@@ -8,6 +8,7 @@ let current_tab = {
 };
 let count = 0;
 
+//Changes the current_tab object based on the current tab's new information
 async function getCurrentTab() {
   console.log("Gathering current tab information");
   let queryOptions = {
@@ -24,16 +25,33 @@ async function getCurrentTab() {
   current_tab.url = tab?.url || tab?.pendingUrl;
 }
 
+//Add user's current tab to array of tracked tabs
 function track_tab() {
   tracked_tabs.push(structuredClone(current_tab));
   count += 1;
 }
 
+//Remove tab with associated tab id from the array of tracked tabs
 function remove_tab(tab_id) {
   tracked_tabs = tracked_tabs.filter((tab) => tab.id !== tab_id);
   count -= 1;
 }
 
+
+//Remove a currently tracked tab from the array if the URL is changed
+function did_tab_change(tabId, tab) {
+  const found = tracked_tabs.find((element) => element.id == tabId);
+
+  if (found.url != tab.url) {
+    return true;
+  }
+  return false;
+}
+
+
+/* Event listeners that call the getCurrentTab function to update the current_tab
+object's information. These are needed to keep track of  the user's current tab at
+all times */
 chrome.runtime.onInstalled.addListener(() => {
   getCurrentTab();
 });
@@ -42,7 +60,10 @@ chrome.runtime.onStartup.addListener(() => {
   getCurrentTab();
 });
 
-chrome.tabs.onUpdated.addListener(() => {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (did_tab_change(tabId, tab)) {
+    remove_tab(tabId);
+  }
   getCurrentTab();
 });
 
@@ -50,14 +71,15 @@ chrome.tabs.onHighlighted.addListener(() => {
   getCurrentTab();
 });
 
-chrome.tabs.onRemoved.addListener((tabId) => {
-  remove_tab(tabId);
-});
-
 chrome.windows.onFocusChanged.addListener((windowId) => {
   if (windowId !== -1) {
     getCurrentTab();
   }
+});
+
+//Remove's the closed tab from the array of tracked tabs (if present in the array)
+chrome.tabs.onRemoved.addListener((tabId) => {
+  remove_tab(tabId);
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
