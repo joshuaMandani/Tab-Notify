@@ -8,6 +8,9 @@ let current_tab = {
 };
 let count = 0;
 
+//Global promise to avoid multiple offscreen documents
+let creating;
+
 //Changes the current_tab object based on the current tab's new information
 async function getCurrentTab() {
   console.log("Gathering current tab information");
@@ -37,10 +40,11 @@ function remove_tab(tab_id) {
   count -= 1;
 }
 
-
 //Remove a currently tracked tab from the array if the URL is changed
 function did_tab_change(tabId, tab) {
   const found = tracked_tabs.find((element) => element.id == tabId);
+
+  if (!found) return;
 
   if (found.url != tab.url) {
     return true;
@@ -48,6 +52,45 @@ function did_tab_change(tabId, tab) {
   return false;
 }
 
+//Return's true or false whether or not a tracked tab's title has been update
+function did_title_change(tabId, tab) {
+  const found = tracked_tabs.find((element) => element.id == tabId);
+
+  if (!found) return;
+
+  if (found.title != tab.title) {
+    console.log("Title Changed");
+    return true;
+  }
+  return false;
+}
+
+//Creates an offscreen document to play the audio which indicates a tracked tab's title change
+async function setupOffscreenDocument() {
+  // Check all windows controlled by the service worker to see if one
+  // of them is the offscreen document with the given path
+  const offscreenUrl = chrome.runtime.getURL("./offscreen.html");
+  const existingContexts = await chrome.runtime.getContexts({
+    contextTypes: ["OFFSCREEN_DOCUMENT"]
+  });
+
+  if (existingContexts.length > 0) {
+    return;
+  }
+
+  // create offscreen document
+  if (creating) {
+    await creating;
+  } else {
+    creating = chrome.offscreen.createDocument({
+      url: "/offscreen.html",
+      reasons: ["AUDIO_PLAYBACK"],
+      justification: "To play a notification sound whenever a tracked tab's title updates",
+    });
+    await creating;
+    creating = null;
+  }
+}
 
 /* Event listeners that call the getCurrentTab function to update the current_tab
 object's information. These are needed to keep track of  the user's current tab at
@@ -60,11 +103,21 @@ chrome.runtime.onStartup.addListener(() => {
   getCurrentTab();
 });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (did_tab_change(tabId, tab)) {
     remove_tab(tabId);
   }
-  getCurrentTab();
+
+  if (did_title_change(tabId, tab)) {
+    await setupOffscreenDocument();
+    chrome.runtime.sendMessage({
+      type: "play",
+      target: "offscreen",
+      data: ""
+    });
+  } else {
+    getCurrentTab();
+  }
 });
 
 chrome.tabs.onHighlighted.addListener(() => {
