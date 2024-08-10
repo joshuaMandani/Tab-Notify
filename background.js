@@ -71,7 +71,7 @@ async function setupOffscreenDocument() {
   // of them is the offscreen document with the given path
   const offscreenUrl = chrome.runtime.getURL("./offscreen.html");
   const existingContexts = await chrome.runtime.getContexts({
-    contextTypes: ["OFFSCREEN_DOCUMENT"]
+    contextTypes: ["OFFSCREEN_DOCUMENT"],
   });
 
   if (existingContexts.length > 0) {
@@ -85,7 +85,8 @@ async function setupOffscreenDocument() {
     creating = chrome.offscreen.createDocument({
       url: "/offscreen.html",
       reasons: ["AUDIO_PLAYBACK"],
-      justification: "To play a notification sound whenever a tracked tab's title updates",
+      justification:
+        "To play a notification sound whenever a tracked tab's title updates",
     });
     await creating;
     creating = null;
@@ -113,7 +114,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     chrome.runtime.sendMessage({
       type: "play",
       target: "offscreen",
-      data: ""
+      data: "",
     });
   } else {
     getCurrentTab();
