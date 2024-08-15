@@ -69,7 +69,7 @@ function did_title_change(tabId, tab) {
 async function setupOffscreenDocument() {
   // Check all windows controlled by the service worker to see if one
   // of them is the offscreen document with the given path
-  const offscreenUrl = chrome.runtime.getURL("./offscreen.html");
+  const offscreenUrl = chrome.runtime.getURL("./offscreen/offscreen.html");
   const existingContexts = await chrome.runtime.getContexts({
     contextTypes: ["OFFSCREEN_DOCUMENT"],
   });
@@ -83,7 +83,7 @@ async function setupOffscreenDocument() {
     await creating;
   } else {
     creating = chrome.offscreen.createDocument({
-      url: "/offscreen.html",
+      url: "/offscreen/offscreen.html",
       reasons: ["AUDIO_PLAYBACK"],
       justification:
         "To play a notification sound whenever a tracked tab's title updates",
@@ -138,6 +138,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message == "is_tracked") {
+
     if (tracked_tabs.some((tab) => tab.id === current_tab.id)) {
       sendResponse({
         message: true,
