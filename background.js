@@ -7,6 +7,7 @@ let current_tab = {
   url: "",
 };
 let count = 0;
+let pings = 0;
 
 //Global promise to avoid multiple offscreen documents
 let creating;
@@ -60,6 +61,7 @@ function did_title_change(tabId, tab) {
 
   if (found.title != tab.title) {
     console.log("Title Changed");
+    chrome.action.setBadgeText({text: (++pings).toString()});
     return true;
   }
   return false;
@@ -138,7 +140,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message == "is_tracked") {
-
+    pings = 0;
     if (tracked_tabs.some((tab) => tab.id === current_tab.id)) {
       sendResponse({
         message: true,

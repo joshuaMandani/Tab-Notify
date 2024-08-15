@@ -58,6 +58,7 @@ async function remove_tab() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
+  chrome.action.setBadgeText({text: ""});
   let response = await is_tracked();
 
   document.querySelector(
