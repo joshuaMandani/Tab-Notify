@@ -2,7 +2,15 @@ async function is_tracked() {
   const response = await chrome.runtime.sendMessage({
     message: "is_tracked",
   });
-  let url = new URL(response.tab.url);
+
+  let url = {
+    href: "NOT LOADED",
+    origin: "NOT LOADED",
+  }
+
+  if (response.tab.hasOwnProperty("url")) {
+    url = new URL(response.tab.url);
+  }
 
   if (url.href.length > url.origin.length) {
     document.querySelector(".link").innerHTML = `${url.origin} [...]`;
@@ -24,7 +32,7 @@ async function track_tab() {
   const response = await chrome.runtime.sendMessage({
     message: "add_tab",
   });
-  console;
+
   if (response.message == "added") {
     document.querySelector("#add").innerHTML = "Remove current tab";
     document.querySelector(
