@@ -9,5 +9,7 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 function ping() {
-  myAudio.play();
+  let clonedAudio = myAudio.cloneNode(true);
+  clonedAudio.onended = () => clonedAudio.remove();
+  clonedAudio.play();
 }
